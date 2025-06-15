@@ -1,12 +1,10 @@
 const socket = io("https://clumsy-reliable-polish.glitch.me", {
-  transports: ["polling", "websocket"],
+  transports: ["polling", "websocket"], // Permite múltiples transportes
 });
 
 console.log("Transporte usado:", socket.io.engine.transport.name);
 
-
-
-
+// Elementos del DOM
 const chat = document.getElementById("chat");
 const messageInput = document.getElementById("messageInput");
 const sendBtn = document.getElementById("sendBtn");
@@ -15,13 +13,15 @@ const joinBtn = document.getElementById("joinBtn");
 
 let currentRoom = null;
 
+// Agregar mensajes al chat
 function addMessage(msg) {
   const p = document.createElement("p");
   p.textContent = msg;
   chat.appendChild(p);
-  chat.scrollTop = chat.scrollHeight;
+  chat.scrollTop = chat.scrollHeight; // Desplazar al final del chat
 }
 
+// Unirse a una sala
 joinBtn.onclick = () => {
   const room = roomInput.value.trim();
   if (!room) {
@@ -37,19 +37,36 @@ joinBtn.onclick = () => {
   roomInput.disabled = true;
 };
 
+// Enviar mensajes
 sendBtn.onclick = () => {
   const msg = messageInput.value.trim();
   if (!msg || !currentRoom) return;
   socket.emit("message", { room: currentRoom, message: msg });
+  addMessage(`Yo: ${msg}`);
   messageInput.value = "";
   messageInput.focus();
 };
 
-// Ahora, mostrar mensaje solo cuando llega del servidor y diferenciar emisor
+// Recibir mensajes
 socket.on("message", ({ message, from }) => {
   if (from === socket.id) {
     addMessage(`Yo: ${message}`);
+  } else if (from === "Servidor") {
+    addMessage(message); // Mensajes del servidor
   } else {
     addMessage(`Alguien (${from}): ${message}`);
   }
+});
+
+// Listeners para conexión/desconexión
+socket.on("connect", () => {
+  console.log("Conectado al servidor con ID:", socket.id);
+});
+
+socket.on("connect_error", (error) => {
+  console.error("Error al conectar:", error);
+});
+
+socket.on("disconnect", () => {
+  console.warn("Desconectado del servidor");
 });

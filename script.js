@@ -1,4 +1,6 @@
-const socket = io("https://clumsy-reliable-polish.glitch.me");
+const socket = io("https://clumsy-reliable-polish.glitch.me", {
+  transports: ["websocket"],
+});
 
 const chat = document.getElementById("chat");
 const messageInput = document.getElementById("messageInput");
@@ -8,7 +10,6 @@ const joinBtn = document.getElementById("joinBtn");
 
 let currentRoom = null;
 
-// Mostrar mensaje en el chat
 function addMessage(msg) {
   const p = document.createElement("p");
   p.textContent = msg;
@@ -16,7 +17,6 @@ function addMessage(msg) {
   chat.scrollTop = chat.scrollHeight;
 }
 
-// Unirse a una sala
 joinBtn.onclick = () => {
   const room = roomInput.value.trim();
   if (!room) {
@@ -32,7 +32,6 @@ joinBtn.onclick = () => {
   roomInput.disabled = true;
 };
 
-// Enviar mensaje
 sendBtn.onclick = () => {
   const msg = messageInput.value.trim();
   if (!msg || !currentRoom) return;
@@ -42,7 +41,6 @@ sendBtn.onclick = () => {
   messageInput.focus();
 };
 
-// Escuchar mensajes del servidor
 socket.on("message", ({ message, from }) => {
   addMessage(`Alguien (${from}): ${message}`);
 });

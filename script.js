@@ -30,6 +30,19 @@ joinBtn.onclick = () => {
     return;
   }
   currentRoom = room;
+
+  // Eliminar listeners duplicados si los hubiera
+  socket.off("message");
+
+  // Suscribirse al evento solo una vez
+  socket.on("message", ({ message, from }) => {
+    if (from === socket.id) {
+      addMessage(`Yo: ${message}`);
+    } else {
+      addMessage(`Alguien (${from}): ${message}`);
+    }
+  });
+
   socket.emit("joinRoom", room);
   addMessage(`Te uniste a la sala "${room}"`);
   messageInput.disabled = false;
@@ -37,6 +50,7 @@ joinBtn.onclick = () => {
   joinBtn.disabled = true;
   roomInput.disabled = true;
 };
+
 
 // Enviar mensajes
 sendBtn.onclick = () => {

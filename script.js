@@ -1,8 +1,6 @@
-const socket = io("https://elite-tinted-radius.glitch.me", {
-  transports: ["polling", "websocket"], // Permite múltiples transportes
+const socket = io("https://clumsy-reliable-polish.glitch.me", {
+  transports: ["polling", "websocket"]
 });
-
-console.log("Transporte usado:", socket.io.engine.transport.name);
 
 // Elementos del DOM
 const chat = document.getElementById("chat");
@@ -13,12 +11,12 @@ const joinBtn = document.getElementById("joinBtn");
 
 let currentRoom = null;
 
-// Agregar mensajes al chat
+// Mostrar mensaje en el chat
 function addMessage(msg) {
   const p = document.createElement("p");
   p.textContent = msg;
   chat.appendChild(p);
-  chat.scrollTop = chat.scrollHeight; // Desplazar al final del chat
+  chat.scrollTop = chat.scrollHeight;
 }
 
 // Unirse a una sala
@@ -33,38 +31,35 @@ joinBtn.onclick = () => {
   // Eliminar listeners duplicados
   socket.off("message");
 
-  // Suscribirse al evento de mensajes solo una vez
-  socket.on("message", ({ message, from }) => {
-    if (from === socket.id) {
-      addMessage(`Yo: ${message}`);
-    } else {
-      addMessage(`Alguien (${from}): ${message}`);
-    }
-  });
-
-  // Unirse a la sala
   socket.emit("joinRoom", room);
   addMessage(`Te uniste a la sala "${room}"`);
+
   messageInput.disabled = false;
   sendBtn.disabled = false;
   joinBtn.disabled = true;
   roomInput.disabled = true;
 };
 
-// Enviar mensajes
+// Enviar mensaje
 sendBtn.onclick = () => {
   const msg = messageInput.value.trim();
   if (!msg || !currentRoom) return;
 
-  // Emitir mensaje al servidor
   socket.emit("message", { room: currentRoom, message: msg });
-
-  // No agregar mensaje localmente, el servidor se encargará de retornarlo
   messageInput.value = "";
   messageInput.focus();
 };
 
-// Listeners para conexión/desconexión
+// Escuchar mensajes del servidor
+socket.on("message", ({ message, from }) => {
+  if (from === socket.id) {
+    addMessage(`Yo: ${message}`);
+  } else {
+    addMessage(`Alguien (${from}): ${message}`);
+  }
+});
+
+// Eventos de conexión/desconexión
 socket.on("connect", () => {
   console.log("Conectado al servidor con ID:", socket.id);
 });

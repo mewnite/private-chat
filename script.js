@@ -36,11 +36,15 @@ sendBtn.onclick = () => {
   const msg = messageInput.value.trim();
   if (!msg || !currentRoom) return;
   socket.emit("message", { room: currentRoom, message: msg });
-  addMessage(`Yo: ${msg}`);
   messageInput.value = "";
   messageInput.focus();
 };
 
+// Ahora, mostrar mensaje solo cuando llega del servidor y diferenciar emisor
 socket.on("message", ({ message, from }) => {
-  addMessage(`Alguien (${from}): ${message}`);
+  if (from === socket.id) {
+    addMessage(`Yo: ${message}`);
+  } else {
+    addMessage(`Alguien (${from}): ${message}`);
+  }
 });

@@ -1,6 +1,5 @@
-const socket = io("https://clumsy-reliable-polish.glitch.me", {
-  transports: ["websocket"],
-});
+const socket = io("https://clumsy-reliable-polish.glitch.me"); 
+
 
 const chat = document.getElementById("chat");
 const messageInput = document.getElementById("messageInput");

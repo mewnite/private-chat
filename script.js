@@ -1,4 +1,5 @@
-const socket = io("https://clumsy-reliable-polish.glitch.me", {
+const socket = io("https://elite-tinted-radius.glitch.me", {
+  //
   transports: ["polling", "websocket"], // Permite múltiples transportes
 });
 

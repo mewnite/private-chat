@@ -50,14 +50,17 @@ sendBtn.onclick = () => {
   messageInput.focus();
 };
 
-// Escuchar mensajes del servidor
-socket.on("message", ({ message, from }) => {
-  if (from === socket.id) {
-    addMessage(`Yo: ${message}`);
-  } else {
-    addMessage(`Alguien (${from}): ${message}`);
-  }
-});
+// Escuchar mensajes del servidor (solo una vez)
+if (!window._messageListenerAdded) {
+  socket.on("message", ({ message, from }) => {
+    if (from === socket.id) {
+      addMessage(`Yo: ${message}`);
+    } else {
+      addMessage(`Alguien (${from}): ${message}`);
+    }
+  });
+  window._messageListenerAdded = true;
+}
 
 // Eventos de conexión/desconexión
 socket.on("connect", () => {

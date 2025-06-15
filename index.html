@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chat Privado</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div id="app">
+    <h2>Chat Privado</h2>
+    <div id="link-section">
+      <button id="generate-link">Generar enlace</button>
+      <p id="chat-link"></p>
+    </div>
+    <div id="chat-section" style="display:none;">
+      <div id="messages"></div>
+      <input id="message" type="text" placeholder="Escribe tu mensaje">
+      <button id="send">Enviar</button>
+    </div>
+  </div>
+  <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>

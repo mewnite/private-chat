@@ -1,5 +1,4 @@
 const socket = io("https://elite-tinted-radius.glitch.me", {
-  //
   transports: ["polling", "websocket"], // Permite múltiples transportes
 });
 
@@ -31,10 +30,10 @@ joinBtn.onclick = () => {
   }
   currentRoom = room;
 
-  // Eliminar listeners duplicados si los hubiera
+  // Eliminar listeners duplicados
   socket.off("message");
 
-  // Suscribirse al evento solo una vez
+  // Suscribirse al evento de mensajes solo una vez
   socket.on("message", ({ message, from }) => {
     if (from === socket.id) {
       addMessage(`Yo: ${message}`);
@@ -43,6 +42,7 @@ joinBtn.onclick = () => {
     }
   });
 
+  // Unirse a la sala
   socket.emit("joinRoom", room);
   addMessage(`Te uniste a la sala "${room}"`);
   messageInput.disabled = false;
@@ -51,27 +51,18 @@ joinBtn.onclick = () => {
   roomInput.disabled = true;
 };
 
-
 // Enviar mensajes
 sendBtn.onclick = () => {
   const msg = messageInput.value.trim();
   if (!msg || !currentRoom) return;
+
+  // Emitir mensaje al servidor
   socket.emit("message", { room: currentRoom, message: msg });
-  addMessage(`Yo: ${msg}`);
+
+  // No agregar mensaje localmente, el servidor se encargará de retornarlo
   messageInput.value = "";
   messageInput.focus();
 };
-
-// Recibir mensajes
-socket.on("message", ({ message, from }) => {
-  if (from === socket.id) {
-    addMessage(`Yo: ${message}`);
-  } else if (from === "Servidor") {
-    addMessage(message); // Mensajes del servidor
-  } else {
-    addMessage(`Alguien (${from}): ${message}`);
-  }
-});
 
 // Listeners para conexión/desconexión
 socket.on("connect", () => {
